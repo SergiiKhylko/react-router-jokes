@@ -4,6 +4,7 @@ import JokeDetails from "./pages/JokeDetails";
 import AddJoke from "./pages/AddJoke";
 import {Fragment} from "react";
 import Layout from "./components/layout/Layout";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
           </Route>
           <Route path="/new-joke">
             <AddJoke/>
+          </Route>
+          <Route path="*">
+            <NotFound />
           </Route>
         </Switch>
       </Fragment>
