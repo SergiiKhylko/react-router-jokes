@@ -1,29 +1,40 @@
 import {Link, Route, useParams, useRouteMatch} from "react-router-dom";
 import Comments from "../components/comments/Comments";
-import {Fragment} from "react";
+import {Fragment, useEffect} from "react";
 import HighlightedJoke from "../components/jokes/HighlightedJoke";
+import useHttp from "../hooks/use-http";
+import {getJoke} from "../hooks/firebase-api";
+import Loader from "../components/UI/Loader";
 
 const JokeDetails = () => {
 
-  const DUMMY_JOKES = [
-    {
-      id: "j1",
-      topic: "Programming",
-      text: "How many programmers does it take to change a light bulb? None - It's a hardware problem"
-    },
-    {
-      id: "j2",
-      topic: "General",
-      text: "How many bones are in the human hand? A handful of them."
-    }
-  ]
+  const {
+    sendHttpRequest,
+    status,
+    data: joke,
+    error} = useHttp(getJoke, true);
 
   const params = useParams();
-  const routeMatch = useRouteMatch();
-  const joke = DUMMY_JOKES.find(joke => joke.id === params.jokeId);
 
-  if (!joke) {
-    return <h1>404 - no jokes</h1>
+  useEffect(() => {
+    sendHttpRequest(params.jokeId).then();
+  }, [sendHttpRequest, params]);
+  const routeMatch = useRouteMatch();
+
+
+
+  if (status === "pending") {
+    return <div className="centered">
+      <Loader />
+    </div>
+  }
+
+  if (error) {
+    return <p className="focused">{error}</p>
+  }
+
+  if (!joke.text) {
+    return <h1>404 - joke not found</h1>
   }
 
   return (
